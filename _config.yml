@@ -1,0 +1,15 @@
+title: Morning AI Daily
+description: AI industry daily tracking reports — models, products, benchmarks, funding
+baseurl: /morning-ai-daily
+url: https://octo-patch.github.io
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: "2026-*/**"
+    values:
+      layout: "report"
