@@ -465,6 +465,57 @@ section {
 }
 
 
+/* ── CTA / powered-by ── */
+
+.powered-by {
+  padding: 3rem 0 0;
+}
+
+.cta-card {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-dim);
+  border-radius: 6px;
+  padding: 1.5rem;
+}
+
+.cta-card p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.cta-detail {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.cta-command {
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.cta-prompt {
+  color: var(--text-dim);
+  margin-right: 0.5rem;
+}
+
+.report-cta {
+  margin-top: 2rem;
+  padding: 1.2rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-dim);
+  border-radius: 6px;
+}
+
+.report-cta p {
+  font-size: 0.8rem;
+  color: var(--text);
+  margin: 0;
+}
+
+
 /* ── footer ── */
 
 footer {

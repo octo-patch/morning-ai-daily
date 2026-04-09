@@ -1,0 +1,56 @@
+name: Update README
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '2026-*/**'
+      - '2027-*/**'
+      - '2028-*/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update latest reports table
+        run: |
+          # Find all report files, sort by date descending, take latest 10
+          reports=$(find . -path './2*/*.md' -name '2*.md' | sort -r | head -10)
+
+          table="| Date | Highlights |\n|------|-----------|"
+
+          for file in $reports; do
+            # Extract date from filename
+            date=$(basename "$file" .md)
+            # Extract month folder
+            month=$(basename "$(dirname "$file")")
+            # Extract summary from frontmatter
+            summary=$(grep '^summary:' "$file" | sed 's/^summary: *"//;s/"$//')
+
+            if [ -n "$summary" ]; then
+              table="$table\n| [$date](https://octo-patch.github.io/morning-ai-daily/$month/$date) | $summary |"
+            fi
+          done
+
+          # Replace content between markers in README
+          awk -v table="$table" '
+            /<!-- LATEST_REPORTS_START -->/ { print; printf "%s\n", table; skip=1; next }
+            /<!-- LATEST_REPORTS_END -->/ { skip=0 }
+            !skip { print }
+          ' README.md > README.tmp && mv README.tmp README.md
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git diff --quiet README.md || {
+            git add README.md
+            git commit -m "Update latest reports in README"
+            git push
+          }
