@@ -529,7 +529,7 @@ footer {
 footer p {
   font-size: 0.75rem;
   color: var(--text-dim);
-  margin-bottom: 0.25rem;
+  margin: 0;
 }
 
 footer a {
