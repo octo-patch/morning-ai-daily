@@ -32,7 +32,7 @@ title: Morning AI Daily
 
 {% if latest.highlights %}
 <section>
-  <h2 class="section-title">Top Stories</h2>
+  <h2 class="section-title">Top Stories — {{ latest.date | date: "%b %d" }}</h2>
   <div class="card-grid">
     {% for item in latest.highlights %}
       {% if item.score >= 7 %}
@@ -42,14 +42,15 @@ title: Morning AI Daily
             <span class="score-badge score-badge--{% if item.score >= 9 %}hot{% elsif item.score >= 7 %}important{% elsif item.score >= 5 %}regular{% else %}minor{% endif %}">{{ item.score }}</span>
           </div>
           <div class="card-entity">{{ item.entity }}</div>
-          <h3 class="card-title">
-            <a href="{{ latest.url | relative_url }}">{{ item.title }}</a>
-          </h3>
+          <h3 class="card-title">{{ item.title }}</h3>
           <p class="card-summary">{{ item.summary }}</p>
         </div>
       {% endif %}
     {% endfor %}
   </div>
+  <p style="margin-top: 0.75rem; text-align: right;">
+    <a href="{{ latest.url | relative_url }}" style="font-size: 0.85rem; font-weight: 500;">Read full report &rarr;</a>
+  </p>
 </section>
 
 <section>
@@ -72,24 +73,33 @@ title: Morning AI Daily
 </section>
 {% endif %}
 
-{% if reports.size > 1 %}
 <section>
-  <h2 class="section-title">Previous Reports</h2>
-  <div class="report-list">
-    {% for report in reports %}
-      {% if report != latest %}
-        <a href="{{ report.url | relative_url }}" class="report-list-item">
-          <span class="report-list-date">{{ report.date | date: "%b %d" }}</span>
-          <span class="report-list-summary">{{ report.summary }}</span>
-          {% if report.stats %}
-            <span class="report-list-stats">{{ report.stats.total }} items</span>
-          {% endif %}
-        </a>
-      {% endif %}
-    {% endfor %}
+  <h2 class="section-title">Report Archive</h2>
+  <div class="calendar" id="report-calendar">
+    <div class="calendar-header">
+      <span class="calendar-month" id="calendar-month-label"></span>
+      <div class="calendar-nav">
+        <button id="cal-prev">&larr;</button>
+        <button id="cal-next">&rarr;</button>
+      </div>
+    </div>
+    <div class="calendar-weekdays">
+      <span class="calendar-weekday">Sun</span>
+      <span class="calendar-weekday">Mon</span>
+      <span class="calendar-weekday">Tue</span>
+      <span class="calendar-weekday">Wed</span>
+      <span class="calendar-weekday">Thu</span>
+      <span class="calendar-weekday">Fri</span>
+      <span class="calendar-weekday">Sat</span>
+    </div>
+    <div class="calendar-days" id="calendar-days"></div>
+    <div class="calendar-legend">
+      <div class="calendar-legend-item"><span class="calendar-legend-dot"></span> Has report</div>
+      <div class="calendar-legend-item"><span class="calendar-legend-dot calendar-legend-dot--today"></span> Today</div>
+    </div>
+    <div class="report-detail-card" id="calendar-detail"></div>
   </div>
 </section>
-{% endif %}
 
 <section class="powered-by">
   <div class="cta-card">
