@@ -1,65 +1,99 @@
 ---
 layout: default
-title: Home
+title: Morning AI Daily
 ---
 
+{% assign reports = site.pages | where: "layout", "report" | sort: "date" | reverse %}
+{% assign latest = reports | first %}
+
 <div class="hero">
-  <h1>Morning <span class="accent">AI</span> Daily<span class="cursor">_</span></h1>
+  <h1>Morning AI Daily</h1>
   <p class="tagline">AI industry tracking — models, products, benchmarks, funding</p>
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">Entities</div>
-      <div class="stat-value">80+</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Sources</div>
-      <div class="stat-value">9</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Types</div>
-      <div class="stat-value">4</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Reports</div>
-      <div class="stat-value green">{{ site.pages | where: "layout", "report" | size }}</div>
-    </div>
+  {% if latest %}
+    <p class="latest-date">Latest: {{ latest.date | date: "%B %d, %Y" }}</p>
+  {% endif %}
+  <div class="stats-row">
+    <span class="stat-pill">{{ reports | size }} reports</span>
+    {% if latest.stats %}
+      <span class="stat-pill">{{ latest.stats.total }} items today</span>
+    {% endif %}
+    <span class="stat-pill">80+ entities</span>
+    <span class="stat-pill">9 sources</span>
   </div>
 </div>
 
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="Model">Model</button>
+  <button class="filter-btn" data-filter="Product">Product</button>
+  <button class="filter-btn" data-filter="Benchmark">Benchmark</button>
+  <button class="filter-btn" data-filter="Funding">Funding</button>
+</div>
+
+{% if latest.highlights %}
 <section>
-  <p class="section-label"><span class="prompt">></span> REPORT TIMELINE</p>
-  <div class="timeline">
-    {% assign reports = site.pages | where: "layout", "report" | sort: "name" | reverse %}
-    {% assign current_month = "" %}
-    {% for report in reports %}
-      {% assign month = report.name | slice: 0, 7 %}
-      {% if month != current_month %}
-        {% assign current_month = month %}
-        <div class="timeline-month">{{ month }}</div>
+  <h2 class="section-title">Top Stories</h2>
+  <div class="card-grid">
+    {% for item in latest.highlights %}
+      {% if item.score >= 7 %}
+        <div class="news-card" data-type="{{ item.type }}" data-score="{{ item.score }}">
+          <div class="card-header">
+            <span class="type-pill type-pill--{{ item.type | downcase }}">{{ item.type }}</span>
+            <span class="score-badge score-badge--{% if item.score >= 9 %}hot{% elsif item.score >= 7 %}important{% elsif item.score >= 5 %}regular{% else %}minor{% endif %}">{{ item.score }}</span>
+          </div>
+          <div class="card-entity">{{ item.entity }}</div>
+          <h3 class="card-title">
+            <a href="{{ latest.url | relative_url }}">{{ item.title }}</a>
+          </h3>
+          <p class="card-summary">{{ item.summary }}</p>
+        </div>
       {% endif %}
-      {% assign date = report.name | remove: ".md" %}
-      <a href="{{ report.url | relative_url }}" class="timeline-item">
-        <div class="timeline-marker">
-          <div class="timeline-dot"></div>
-          <div class="timeline-line"></div>
-        </div>
-        <div class="timeline-card">
-          <div class="timeline-date">{{ date }}</div>
-          {% if report.summary %}
-            <div class="timeline-summary">{{ report.summary }}</div>
-          {% endif %}
-          <span class="timeline-link">view report &rarr;</span>
-        </div>
-      </a>
     {% endfor %}
   </div>
 </section>
 
+<section>
+  <h2 class="section-title">More Updates</h2>
+  <div class="card-grid card-grid--compact">
+    {% for item in latest.highlights %}
+      {% if item.score >= 5 and item.score < 7 %}
+        <div class="news-card news-card--compact" data-type="{{ item.type }}" data-score="{{ item.score }}">
+          <div class="card-header">
+            <span class="type-pill type-pill--{{ item.type | downcase }}">{{ item.type }}</span>
+            <span class="score-badge score-badge--regular">{{ item.score }}</span>
+          </div>
+          <div class="card-entity">{{ item.entity }}</div>
+          <h3 class="card-title">{{ item.title }}</h3>
+          <p class="card-summary">{{ item.summary }}</p>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if reports.size > 1 %}
+<section>
+  <h2 class="section-title">Previous Reports</h2>
+  <div class="report-list">
+    {% for report in reports %}
+      {% if report != latest %}
+        <a href="{{ report.url | relative_url }}" class="report-list-item">
+          <span class="report-list-date">{{ report.date | date: "%b %d" }}</span>
+          <span class="report-list-summary">{{ report.summary }}</span>
+          {% if report.stats %}
+            <span class="report-list-stats">{{ report.stats.total }} items</span>
+          {% endif %}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 <section class="powered-by">
-  <p class="section-label"><span class="prompt">></span> GENERATE YOUR OWN</p>
   <div class="cta-card">
-    <p>These reports are auto-generated by <a href="https://github.com/octo-patch/MorningAI"><strong>MorningAI</strong></a> — an AI news tracking skill that runs inside your coding agent.</p>
+    <p>Generated by <a href="https://github.com/octo-patch/MorningAI"><strong>MorningAI</strong></a> — an AI news tracking skill for your coding agent.</p>
     <p class="cta-detail">80+ entities, 9 sources, 5-dimension scoring. No Docker, no servers.</p>
-    <p class="cta-command"><span class="cta-prompt">$</span> /morning-ai</p>
   </div>
 </section>

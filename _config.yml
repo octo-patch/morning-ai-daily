@@ -3,6 +3,10 @@ description: AI industry daily tracking reports — models, products, benchmarks
 baseurl: /morning-ai-daily
 url: https://octo-patch.github.io
 
+author:
+  name: MorningAI
+  url: https://github.com/octo-patch/MorningAI
+
 defaults:
   - scope:
       path: ""
